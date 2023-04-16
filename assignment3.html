@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+      <div>
+          <h1>Movie Recommendation App</h1>
+          <label for="genre">Genre:</label>
+          <select id="genre">
+            <option value="">Select genre</option>
+            <option value="action">Action</option>
+            <option value="comedy">Comedy</option>
+            <option value="drama">Drama</option>
+          </select>
+          <br>
+          <label for="language">Language:</label>
+          <select id="language">
+            <option value="">Select language</option>
+            <option value="english">English</option>
+            <option value="spanish">Spanish</option>
+            <option value="french">French</option>
+          </select>
+          <br>
+          <label for="year">Year:</label>
+          <select id="year">
+            <option value="">Select year</option>
+            <option value="2019">2019</option>
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+          </select>
+          <br>
+          <button onclick="recommend()">Recommend</button>
+        </div>
+        <div id="recommendations"></div>
+        <script src="app.js"></script>
+<script type="text/javascript">
+// Load the movie data from data.json
+const movieData = fetch('data.json')
+  .then(response => response.json())
+  .then(data => data.movies);
+
+function recommend() {
+  // Get user input values
+  const genre = document.getElementById('genre').value;
+  const language = document.getElementById('language').value;
+  const year = document.getElementById('year').value;
+
+  // Filter movies based on user input
+  const filteredMovies = movieData.filter(movie => {
+    return (!genre || movie.genre.toLowerCase() === genre.toLowerCase()) &&
+           (!language || movie.language.toLowerCase() === language.toLowerCase()) &&
+           (!year || movie.year === parseInt(year));
+  });
+
+  // Display the filtered movies as recommendations
+  const recommendationsDiv = document.getElementById('recommendations');
+  recommendationsDiv.innerHTML = '';
+  if (filteredMovies.length === 0) {
+    recommendationsDiv.innerHTML = 'No movies found.';
+  } else {
+    const ul = document.createElement('ul');
+    filteredMovies.forEach(movie => {
+      const li = document.createElement('li');
+      const img = document.createElement('img');
+      img.src = movie.picture;
+      img.alt = movie.title;
+      img.width = 100;
+      li.appendChild(img);
+      const span = document.createElement('span');
+      span.textContent = `${movie.title} (${movie.year}) - Rank: ${movie.rank}`;
+      li.appendChild(span);
+      ul.appendChild(li);
+    });
+    recommendationsDiv.appendChild(ul);
+  }
+}
+</script>
+</body>
+</html>
